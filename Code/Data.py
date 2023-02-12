@@ -1,12 +1,11 @@
 
 
 class Data:
-    def __init__(self, test):
-        self.test = test
 
-    def Graph(self, nb_nodes, nb_vertices, deg_min, deg_max, graph):
+    def __init__(self, nb_nodes, nb_edges, deg_min, deg_max, graph, deg_nodes):
         self.nb_nodes = nb_nodes
-        self.nb_vertices = nb_vertices
+        self.nb_edges = nb_edges
         self.deg_min = deg_min
-        self.def_max = deg_max
+        self.deg_max = deg_max
         self.graph = graph
+        self.deg_nodes = deg_nodes
