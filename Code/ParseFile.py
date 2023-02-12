@@ -1,4 +1,5 @@
-import Data
+from classGraph import *
+
 def parse_file(file_path):
     with open(file_path, 'r') as f:
         lines = f.readlines()
@@ -43,7 +44,5 @@ def parse_file(file_path):
         u ,v = map(int, values)
         deg_nodes.append(v)
 
-    graph = Data.Data(nb_nodes, nb_edges, deg_min, deg_max, graph, deg_nodes
-
-                  )
+    graph = Graph(nb_nodes, nb_edges, deg_min, deg_max, graph, deg_nodes)
     return graph

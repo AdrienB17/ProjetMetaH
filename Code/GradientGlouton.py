@@ -1,7 +1,6 @@
 import random
 import Data
 
-
 def gradient_glouton(graph):
     cost = 0
     partitions = [0] * graph.nb_nodes  # initialiser les partitions de manière aléatoire

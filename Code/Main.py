@@ -1,8 +1,14 @@
-import ParseFile
+from ParseFile import *
+import os
+import sys
 
 if __name__ == '__main__':
 
-    fileName = "deuxTriangles.txt"
-    file_path = '../Data/graph_samples/samples/' + fileName
-    graph = ParseFile.parse_file(file_path)
-    toto = 0
+    filename = "/deuxTriangles.txt"
+    filepath = os.path.abspath('./Data/graph_samples/samples') + filename
+
+    #graph = Graph()
+    graph = parse_file(filepath)
+    #print(graphe.graph)
+    print(graph)
+    #toto = 0
