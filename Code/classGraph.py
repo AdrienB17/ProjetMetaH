@@ -1,10 +1,12 @@
 class Graph:
-    def __init__(self, nb_nodes=0, nb_edges=0, deg_min=0, deg_max=0, graphRep={}, deg_nodes=0):
+    def __init__(self, nb_nodes=0, nb_edges=0, deg_min=0, deg_max=0, graphRep={}, deg_nodes=[]):
         self.nb_nodes = nb_nodes
         self.nb_edges = nb_edges
         self.deg_min = deg_min
         self.deg_max = deg_max
-        self.graphRep = graphRep    # grapheRep = représentation du graphe (dict de lists)
+        # grapheRep = représentation du graphe (dict de lists de tuples) 
+        # clé : [(j1, c1), (j2, c2)...]
+        self.graphRep = graphRep    
         self.deg_nodes = deg_nodes
 
     def __len__(self):

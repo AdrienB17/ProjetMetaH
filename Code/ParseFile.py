@@ -7,10 +7,11 @@ def parse_file(file_path):
     # Remove comments
     lines = [line for line in lines if not line.startswith('#')]
     lines = [line.strip() for line in lines]
-
     # Get the number of vertices, edges, minimum degree and maximum degree
 
-    if len(lines[0]) > 3:
+    ## !! len('10 17') > 3, split avant
+    top = lines[0].split()
+    if len(top) > 3:
         nb_nodes, nb_edges, min_degree, max_degree = map(int, lines[0].split())
         lines = lines[1:]
     else:
@@ -32,16 +33,18 @@ def parse_file(file_path):
             graph[v].append((u, 1))
         else:
             # This line represents an edge
-            u, v, weight = map(int, values)
+            u, v, weight = int(values[0]), int(values[1]), float(values[2])
             if u not in graph:
                 graph[u] = []
             graph[u].append((v, weight))
+
+    # Problème, le premier noeud doit être 0 pour respecter les indices du tableau
 
     lines = lines[nb_nodes+1:]
     deg_nodes = []
     for line in lines:
         values = line.split()
-        u ,v = map(int, values)
+        u ,v = int(values[0]), float(values[1])
         deg_nodes.append(v)
 
     graph = Graph(nb_nodes, nb_edges, deg_min, deg_max, graph, deg_nodes)
