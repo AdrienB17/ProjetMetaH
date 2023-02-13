@@ -1,6 +1,6 @@
 import classGraph
 
-def partition_graph(graph, n, m):
+def partition_graph(graph):
     def check_valid_partition(partition, graph):
         # Calculate the sum of weights between vertices in different classes
         sum_of_weights = 0
@@ -10,7 +10,7 @@ def partition_graph(graph, n, m):
                     if (i, j) in graph:
                         sum_of_weights += graph[(i, j)]
         # Check if the sum of weights is minimal and the classes are roughly equally populated
-        return sum_of_weights <= graph.nb_edges and abs(len([x for x in partition if x == 0]) - len([x for x in partition if x == 1])) <= n//100
+        return sum_of_weights <= graph.nb_edges and abs(len([x for x in partition if x == 0]) - len([x for x in partition if x == 1])) <= graph.nb_nodes//100
 
     def enumerate_partitions(partition, depth, graph):
         if depth == graph.nb_nodes:
