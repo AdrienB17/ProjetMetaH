@@ -23,7 +23,7 @@ def parse_file(file_path):
     graph = {}
 
     # Iterate over the lines to build the graph representation
-    for i in range(nb_nodes+1):
+    for i in range(nb_edges):
         line = lines[i]
         values = line.split()
         if len(values) == 2:
@@ -36,14 +36,14 @@ def parse_file(file_path):
             u, v, weight = int(values[0]), int(values[1]), float(values[2])
             if u not in graph:
                 graph[u] = []
-            graph[u].append((v, weight))
+            graph[u].append((v, int(weight)))
 
     # Problème, le premier noeud doit être 0 pour respecter les indices du tableau
 
-    lines = lines[nb_nodes+1:]
+    lines = lines[nb_edges:]
     deg_nodes = []
-    for line in lines:
-        values = line.split()
+    for j in range(nb_nodes):
+        values = lines[j].split()
         u ,v = int(values[0]), float(values[1])
         deg_nodes.append(v)
 

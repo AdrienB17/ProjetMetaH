@@ -5,8 +5,8 @@ import sys
 
 if __name__ == '__main__':
 
-    filename = "/dixSommets_2.txt"
-    filepath = os.path.abspath('./Data/graph_samples/samples') + filename
+    filename = "/huitSommets_1.txt"
+    filepath = os.path.abspath('../Data/graph_samples/samples') + filename
 
     #graph = Graph()
     graph = parse_file(filepath)
