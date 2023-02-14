@@ -29,14 +29,14 @@ def parse_file(file_path):
         if len(values) == 2:
             u, v = map(int, values)
             if u not in graph:
-                graph[u] = []
-            graph[v].append((u, 1))
+                graph[u] = {}
+            graph[v].update({u: 1})
         else:
             # This line represents an edge
             u, v, weight = int(values[0]), int(values[1]), float(values[2])
             if u not in graph:
-                graph[u] = []
-            graph[u].append((v, int(weight)))
+                graph[u] = {}
+            graph[u].update({v: float(weight)})
 
     # Problème, le premier noeud doit être 0 pour respecter les indices du tableau
 
