@@ -85,6 +85,11 @@ def partition_graphv2(graph):
                 partition_2.add(best_i)
                 sum_edge_weights += max_gain
                 moved = True
+
+    if check_partitions(graph,partition_1,partition_2)!=True:
+        print("NOT FEASIBLE")
+        return
+
     return partition_1, partition_2, sum_edge_weights
 
 def calculate_weight_matrix(graph):
@@ -95,3 +100,18 @@ def calculate_weight_matrix(graph):
         for j, weight in edges.items():
             weight_matrix[i - min_node][j - min_node] = weight
     return weight_matrix
+
+def check_partitions(graph, partition_1, partition_2):
+    nb_nodes = graph.nb_nodes
+    min_node = min(graph.graphRep.keys())
+    all_nodes = set(range(min_node, nb_nodes+min_node))
+
+    # Vérifier que la somme des deux partitions correspond à tous les sommets du graphe
+    if len(partition_1) + len(partition_2) != nb_nodes:
+        return False
+
+    # Vérifier que l'union des deux partitions est égale à l'ensemble de tous les sommets
+    if partition_1.union(partition_2) != all_nodes:
+        return False
+
+    return True
