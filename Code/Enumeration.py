@@ -1,20 +1,23 @@
-import classGraph
 from itertools import combinations
 from math import ceil, floor
+
 def partition_graph(graph):
-    def check_valid_partition(partition, graph):
+    def check_valid_partition(partition, Graphe):
+        graph = Graphe.graphRep
         # Calculate the sum of weights between vertices in different classes
         sum_of_weights = 0
-        for i in range(graph.nb_nodes):
-            for j in range(i+1, graph.nb_nodes):
+        n = len(graph)
+        for i in graph:
+            for j in graph[i]:
                 if partition[i] != partition[j]:
-                    if (i, j) in graph:
-                        sum_of_weights += graph[(i, j)]
+                    if j in graph[i]:
+                        sum_of_weights += graph[i][j]
         # Check if the sum of weights is minimal and the classes are roughly equally populated
-        return sum_of_weights <= graph.nb_edges and abs(len([x for x in partition if x == 0]) - len([x for x in partition if x == 1])) <= graph.nb_nodes//100
+        return sum_of_weights <= sum([sum(graph[i].values()) for i in graph]) and abs(
+            len([x for x in partition if x == 0]) - len([x for x in partition if x == 1])) <= ceil(n / 100)
 
     def enumerate_partitions(partition, depth, graph):
-        if depth == graph.nb_nodes:
+        if depth == len(graph):
             if check_valid_partition(partition, graph):
                 return partition
             return None
@@ -35,13 +38,13 @@ def partition_graph(graph):
         return None
 
     # Initialize the partition array with -1
-    partition = [-1] * graph.nb_nodes
+    partition = [-1] * len(graph)
     # Call the enumeration function
     return enumerate_partitions(partition, 0, graph)
 
 
 
-def partition_graphv2(graph):
+def partition_graphV2(graph):
     nb_nodes = graph.nb_nodes
     nb_edges = graph.nb_edges
     max_nodes_per_partition = ceil(nb_nodes/2) + floor(0.01 * nb_nodes)
@@ -67,13 +70,13 @@ def partition_graphv2(graph):
             for i in partition_1:
                 for j in partition_2:
                     if min_node == 0:
-                        gain = matrice_ponderation[i][j] - matrice_ponderation[j][i]
+                        gain = matrice_ponderation[j][i] - matrice_ponderation[i][j]
                         if gain > max_gain:
                             max_gain = gain
                             best_i = i
                             best_j = j
                     else:
-                        gain = matrice_ponderation[i-1][j-1] - matrice_ponderation[j-1][i-1]
+                        gain = matrice_ponderation[j-1][i-1] - matrice_ponderation[i-1][j-1]
                         if gain > max_gain:
                             max_gain = gain
                             best_i = i
@@ -83,7 +86,7 @@ def partition_graphv2(graph):
                 partition_1.add(best_j)
                 partition_2.remove(best_j)
                 partition_2.add(best_i)
-                sum_edge_weights += max_gain
+                sum_edge_weights -= max_gain
                 moved = True
 
     if check_partitions(graph,partition_1,partition_2)!=True:
@@ -98,7 +101,7 @@ def calculate_weight_matrix(graph):
     min_node = min(graph.graphRep.keys())
     for i, edges in graph.graphRep.items():
         for j, weight in edges.items():
-            weight_matrix[i - min_node][j - min_node] = weight
+            weight_matrix[i - min_node][j] = weight
     return weight_matrix
 
 def check_partitions(graph, partition_1, partition_2):
@@ -115,3 +118,57 @@ def check_partitions(graph, partition_1, partition_2):
         return False
 
     return True
+
+
+def partition_graphV3(graph):
+    def check_valid_partition(partition, Graphe):
+        graph = Graphe.graphRep
+        # Calculate the sum of weights between vertices in different classes
+        sum_of_weights = 0
+        n = len(graph)
+        for i in graph:
+            for j in graph[i]:
+                if partition[i] != partition[j]:
+                    if j in graph[i]:
+                        sum_of_weights += graph[i][j]
+        # Check if the sum of weights is minimal and the classes are roughly equally populated
+        return sum_of_weights <= sum([sum(graph[i].values()) for i in graph]) and abs(
+            len([x for x in partition if x == 0]) - len([x for x in partition if x == 1])) <= ceil(n / 100)
+
+    def evaluate_partition(partition, Graphe):
+        if check_valid_partition(partition, Graphe):
+            # Calculate the sum of weights between vertices in different classes
+            sum_of_weights = 0
+            graph = Graphe.graphRep
+            for i in graph:
+                for j in graph[i]:
+                    if partition[i] != partition[j]:
+                        if j in graph[i]:
+                            sum_of_weights += graph[i][j]
+            return sum_of_weights
+        else:
+            # Return infinity if the partition is not valid
+            return float('inf')
+
+    # Define the number of partitions to generate
+    p = 2
+    n = len(graph)
+
+    # Initialize the best partition and its score
+    best_partition = None
+    best_score = float('inf')
+
+    # Generate all possible partitions
+    for i in range(p**n):
+        # Construct the i-th partition
+        partition = [int(digit) for digit in format(i, f'0{n}b')]
+
+        # Evaluate the partition
+        score = evaluate_partition(partition, graph)
+
+        # Update the best partition if necessary
+        if score < best_score:
+            best_partition = partition
+            best_score = score
+
+    return best_partition, best_score

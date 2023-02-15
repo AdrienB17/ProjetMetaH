@@ -31,12 +31,18 @@ def parse_file(file_path):
             if u not in graph:
                 graph[u] = {}
             graph[v].update({u: 1})
+            if v not in graph:
+                graph[v] = {}
+            graph[u].update({v: 1})
         else:
             # This line represents an edge
             u, v, weight = int(values[0]), int(values[1]), float(values[2])
             if u not in graph:
                 graph[u] = {}
             graph[u].update({v: float(weight)})
+            if v not in graph:
+                graph[v] = {}
+            graph[v].update({u: float(weight)})
 
     # Problème, le premier noeud doit être 0 pour respecter les indices du tableau
 
