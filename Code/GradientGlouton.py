@@ -46,6 +46,7 @@ def neighbourhoodSwap(graph, partition):
 
 def argbestSwap(graph, partition, costPartition):
     best = []
+    bestCost = costPartition
     for k in range(len(partition)):
         if (partition[k] == 0):
             for l in range(len(partition)):
@@ -53,25 +54,46 @@ def argbestSwap(graph, partition, costPartition):
                 cp_part = copy.deepcopy(partition)
                 if (partition[l] == 1):
                     if estAreteInterclasse(graph, (l,k), partition):
-                        print(f'{l, k} Arête interclasse')
+                        #print(f'{l, k} Arête interclasse')
                         cost -= graph[l][k]
                     # Si les deux noeuds dont on a changé les classes forment une arête interclasse
                     # on modifie le côut de la solution
                     swap(cp_part, k, l)
-                    if estAreteInterclasse(graph, (k,l), cp_part) :
-                        print(f'{k, l} Arête interclasse de la partition modifiée')
-                        # Dans le cas d'un swap on ne change pas les arêtes interclasses
-                        cost += graph[k][l]
-                    print(cost)
-    print(partition)
-    return best
+                    cost += graph[k][l]
+                    if cost < bestCost :
+                        bestCost = cost
+                        best = cp_part
+    return (best, bestCost)
+
+def computeCost(graph, partition):
+    cost = 0
+    for k in range(graph.nb_nodes):
+        if partition[k] == 0:
+            for l in range(graph.nb_nodes):
+                if partition[l] == 1 and estAreteInterclasse(graph, (k,l), partition):
+                    cost += graph[k][l]
+    return cost
 
 def gradient(graph):
     # C0 la configuration initiale par tirage aléatoire
-   C0 = [ random.randint(0, 1) for k in range(graph.nb_nodes)]
-   Ci = C0
-   i = 0
-   done = False
-   argbestSwap(graph, C0, 0)
-   #while not done :
-   return Ci
+    C0 = [random.randint(0, 1) for k in range(graph.nb_nodes)]
+    # Calcul du coût de la solution initiale
+    initCost = computeCost(graph, C0)
+    print(f'Partition initiale : {str(C0)}\nCoût initial : {initCost}')
+
+    Ci = C0
+    costCi = initCost
+    i = 0
+    done = False
+    #argbestSwap(graph, C0, 0)
+    while (i < 4) :
+        (Cip1, costCip1) = argbestSwap(graph, C0, costCi)
+        print(f'Itération {i} : Partition : {str(Cip1)} -- Coût : {costCip1}')
+        if ( costCip1 < costCi ):
+            i += 1
+            Ci = Cip1
+            costCi = costCip1
+        else :
+            break
+            done = True
+    return Ci
