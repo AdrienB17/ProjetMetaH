@@ -106,11 +106,11 @@ def check_partitions(graph, partition_1, partition_2):
     min_node = min(graph.graphRep.keys())
     all_nodes = set(range(min_node, nb_nodes+min_node))
 
-    # Vérifier que la somme des deux partitions correspond à tous les sommets du graphe
+    # Vérifie que la somme des deux partitions correspond à tous les sommets du graphe
     if len(partition_1) + len(partition_2) != nb_nodes:
         return False
 
-    # Vérifier que l'union des deux partitions est égale à l'ensemble de tous les sommets
+    # Vérifie que l'union des deux partitions est égale à l'ensemble de tous les sommets
     if partition_1.union(partition_2) != all_nodes:
         return False
 
