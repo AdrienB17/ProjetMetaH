@@ -1,15 +1,33 @@
 from ParseFile import *
 from GradientGlouton import *
+from Enumeration import *
 import os
 import sys
+import time
 
 if __name__ == '__main__':
 
-    #filename = "/huitSommets_1.txt"
-    filename = "/RG_13_3.txt"
-    filepath = os.path.abspath('./Data/graph_samples/samples') + filename
+    folderpath = "../Data/graph_samples/samples"
+    #folderpath = "../DataTest"
+    filepath_results = "../Solutions/results.txt"
 
-    #graph = Graph()
-    graph = parse_file(filepath)
-    print(graph)
-    partition = gradient(graph)
+    with open(filepath_results, "w") as f:
+        # Boucle sur tous les fichiers du dossier
+        files = os.listdir(folderpath)
+        for file in files:
+            # Si le fichier est un fichier texte
+            if file.endswith(".txt"):
+                path = folderpath+"/"+file
+                graph = parse_file(path)
+                if graph.nb_nodes <= 30:
+                    # Mesurer le temps nécessaire pour trouver une solution
+                    begin = time.time()
+                    solution = partition_graphV3(graph)
+                    duree = time.time() - begin
+
+                    # Enregistrement du nom de l'instance, de la solution et du temps de traitement dans le fichier
+                    f.write(f"Instance : {file}\n")
+                    f.write(f"Solution : {solution}\n")
+                    f.write(f"Temps de traitement : {duree} secondes\n\n")
+
+    print("toto")

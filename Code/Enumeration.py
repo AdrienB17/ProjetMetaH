@@ -123,12 +123,13 @@ def check_partitions(graph, partition_1, partition_2):
 def partition_graphV3(graph):
     def check_valid_partition(partition, Graphe):
         graph = Graphe.graphRep
+        min_node = min(graph.keys())
         # Calculate the sum of weights between vertices in different classes
         sum_of_weights = 0
         n = len(graph)
         for i in graph:
             for j in graph[i]:
-                if partition[i] != partition[j]:
+                if partition[i-min_node] != partition[j-min_node]:
                     if j in graph[i]:
                         sum_of_weights += graph[i][j]
         # Check if the sum of weights is minimal and the classes are roughly equally populated
@@ -140,9 +141,10 @@ def partition_graphV3(graph):
             # Calculate the sum of weights between vertices in different classes
             sum_of_weights = 0
             graph = Graphe.graphRep
+            min_node = min(graph.keys())
             for i in graph:
                 for j in graph[i]:
-                    if partition[i] != partition[j]:
+                    if partition[i-min_node] != partition[j-min_node]:
                         if j in graph[i]:
                             sum_of_weights += graph[i][j]
             return sum_of_weights
