@@ -1,5 +1,5 @@
 from ParseFile import *
-from GradientGlouton import *
+from Gradient import *
 from Enumeration import *
 import os
 import sys
