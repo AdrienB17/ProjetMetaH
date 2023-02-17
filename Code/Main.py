@@ -5,8 +5,18 @@ import os
 import sys
 import time
 
-def runAllInstances(folderpath, outfile):
-     with open(filepath_results, "w") as f:
+def runGradient(graph): 
+    partition, cost, classSizes = gradient(graph)
+    print(f'Partition trouvée : {partition} avec un coût de {cost}\nLa classe 0 possède {classSizes[0]} sommets et la classe 1 possède {classSizes[1]} sommets')
+
+def runAllInstances(folderpath, outfile, algo=0):
+    '''
+        Exécute toutes les instances du dossier "folderpath" et écrit les résultats : file, sol, time
+        dans le fichier outfile.
+        Algorithme (défaut = 0) :   0 = énumération
+                                    1 = gradient
+    '''
+    with open(filepath_results, "w") as f:
         # Boucle sur tous les fichiers du dossier
         files = os.listdir(folderpath)
         for file in files:
@@ -28,13 +38,12 @@ def runAllInstances(folderpath, outfile):
 if __name__ == '__main__':
 
     folderpath = "../Data/graph_samples/samples"
-    #folderpath = "../DataTest"
     filepath_results = "../Solutions/results.txt"
 
-    relative_path = "/"
+    relative_path = "/Data/graph_samples/samples/dixSeptSommets.txt"
     path = os.path.abspath("./")
 
     graph = parse_file(path + relative_path)
     print(graph)
 
-    partition = gradient(graph)
+    runGradient(graph)

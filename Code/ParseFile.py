@@ -64,5 +64,9 @@ def parse_file(file_path):
         startWithZero = False
 
     if not startWithZero :
-       graphOut.graphRep = {(k-1) : v for k, v in graphOut.graphRep.items()} 
+        graphOut.graphRep = {(k-1) : v for k, v in graphOut.graphRep.items()} 
+        for k, val in graphOut.graphRep.items():
+            val = {k: v for k, v in sorted(val.items(), key=lambda item: item[0])} 
+            val = {(k-1): v for k, v in val.items()}
+            graphOut.graphRep[k] = val
     return graphOut

@@ -82,29 +82,45 @@ def neighbourhoodPnD(graph, partition):
     print(nb0, nb1)
 
 def argbestPnD(graph, partition, costPartition):
+    '''
+        Cherche dans le voisinge de la configuration "partition" le meilleur voisin (au sens du côut).
+        mouvement élémentaire = Pick'n'Drop
+        Renvoie un tuple comprenant :   best = la meilleure partition trouvée
+                                        bestCost = le coût associé à best
+                                        classSizes = le nombre de sommets dans chaque classe
+    '''
     best = partition
     bestCost = costPartition
     classSizes = [0, 0]
+    ## On calcule la taille des classes initiales
     for k in partition:
         if k == 0: classSizes[0] += 1
         else : classSizes[1] += 1
-    
-    for k in range(len(partition)):
+
+    # Dans ce cas, on inspecte tout le voisinage d'une configuration donnée.
+    # Il y a n*(k-1) voisins avec ici k = 2 et n = le nombre de sommets du graphe.
+    for k in range(graph.nb_nodes):
+        cost = costPartition
         cp_part = copy.deepcopy(partition)
         if (partition[k] == 0):
             cp_part[k] = 1-partition[k]
             classSizes[0] -= 1
             classSizes[1] += 1
+            #for l,v in graph[k].items():
+            #    if partition[k] != partition[l] : cost -= v
         elif (partition[k] == 1):
             cp_part[k] = 1-partition[k]
             classSizes[1] -= 1
             classSizes[0] += 1
-        #cost = computeCost(graph, cp_part)
-        cost = int(random.random()*2000 % 2000)
-        if (cost < bestCost and abs(classSizes[0]-classSizes[1]) <= 2):
+            #for l,v in graph[k].items():
+            #    if partition[k] != partition[l] : cost -= v
+        ## Ici le calcul du coût pose problème, trop lent O(n^2)
+        cost = computeCost(graph, cp_part)
+        #cost = int(random.random()*2000 % 2000)
+        if (cost < bestCost and abs(classSizes[0]-classSizes[1]) <= 4):
             bestCost = cost
             best = cp_part
-    return(best, bestCost)
+    return(best, bestCost, classSizes)
 
 
 def gradient(graph):
@@ -116,17 +132,19 @@ def gradient(graph):
 
     Ci = C0
     costCi = initCost
+    classSizes = []
     i = 1
     done = False
     #argbestSwap(graph, C0, 0)
     while (not done) :
         # neighbourhoodPnD(graph, C0)
-        (Cip1, costCip1) = argbestPnD(graph, Ci, costCi)
+        (Cip1, costCip1, classSz) = argbestPnD(graph, Ci, costCi)
         print(f'Itération {i} : Partition : {str(Cip1)} -- Coût : {costCip1}')
         if ( costCip1 < costCi ):
             i += 1
             Ci = Cip1
             costCi = costCip1
+            classSizes = classSz
         else :
             done = True
-    return Ci
+    return (Ci, costCi, classSizes)

@@ -4,7 +4,7 @@ class Graph:
         self.nb_edges = nb_edges
         self.deg_min = deg_min
         self.deg_max = deg_max
-        # grapheRep = représentation du graphe (dict de lists de tuples) 
+        # grapheRep = représentation du graphe (dict de dict) 
         # clé : [(j1, c1), (j2, c2)...]
         self.graphRep = graphRep    
         self.deg_nodes = deg_nodes
