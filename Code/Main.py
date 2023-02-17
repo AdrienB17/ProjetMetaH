@@ -8,6 +8,8 @@ import time
 def runGradient(graph): 
     partition, cost, classSizes = gradient(graph)
     print(f'Partition trouvée : {partition} avec un coût de {cost}\nLa classe 0 possède {classSizes[0]} sommets et la classe 1 possède {classSizes[1]} sommets')
+    cs = computeCost(graph, partition)
+    print(f'Coût de la solution calculé par computeCost : {cs}')
 
 def runAllInstances(folderpath, outfile, algo=0):
     '''
@@ -40,10 +42,10 @@ if __name__ == '__main__':
     folderpath = "../Data/graph_samples/samples"
     filepath_results = "../Solutions/results.txt"
 
-    relative_path = "/Data/graph_samples/samples/dixSeptSommets.txt"
+    relative_path = "/Data/graph_samples/samples/milleSommets.txt"
     path = os.path.abspath("./")
 
     graph = parse_file(path + relative_path)
-    print(graph)
+    #print(graph)
 
     runGradient(graph)

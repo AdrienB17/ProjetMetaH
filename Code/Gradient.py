@@ -4,7 +4,7 @@ import copy
 
 def estAreteInterclasse(graph, edge, partition) -> bool:
     '''
-        Si le sommet u est dans une partition et v dans une autre alors l'arête est une arête interclasse
+        Si le sommet u est dans une partition et v dans une autre alors l'arête est une arête interclasse.
     '''
     res = 1
     u, v = edge
@@ -21,9 +21,10 @@ def computeCost(graph, partition):
     '''
     cost = 0
     for k in range(graph.nb_nodes):
-        for l in range(graph.nb_nodes):
+        for l in range(k, graph.nb_nodes):
             if estAreteInterclasse(graph, (k,l), partition):
                 cost += graph[k][l]
+                #print(f'{k, l}: {cost}')
     return cost
 
 def swap(tab, a, b):
@@ -32,7 +33,7 @@ def swap(tab, a, b):
 def neighbourhoodSwap(graph, partition):
     '''
         Debug.
-        Cette fonction renvoie le voisinage d'une configuraion donnée.
+        Cette fonction affiche le voisinage d'une configuraion donnée.
         mouvement élémentaire = swap
         nombre de voisins pour 2 classes n1*n2, n1 = card partition 1 et n2 = card partition 2
     '''
@@ -58,7 +59,7 @@ def neighbourhoodSwap(graph, partition):
 def neighbourhoodPnD(graph, partition):
     '''
         Debug.
-        Cette fonction renvoie le voisinage d'une configuraion donnée.
+        Cette fonction affiche le voisinage d'une configuraion donnée.
         mouvement élémentaire = PnD
     '''
     nbVois = 0
@@ -77,7 +78,6 @@ def neighbourhoodPnD(graph, partition):
             cp_part[k] = 1-partition[k]
             nbVois += 1
         print(f'{k} : {str(partition)} -> {str(cp_part)}' )
-    # On doit avoir nbVois = nb0 * nb1
     print(nbVois)
     print(nb0, nb1)
 
@@ -91,55 +91,62 @@ def argbestPnD(graph, partition, costPartition):
     '''
     best = partition
     bestCost = costPartition
-    classSizes = [0, 0]
+    
     ## On calcule la taille des classes initiales
+    classSizes = [0, 0]
     for k in partition:
         if k == 0: classSizes[0] += 1
         else : classSizes[1] += 1
-
+    bestClass = classSizes
     # Dans ce cas, on inspecte tout le voisinage d'une configuration donnée.
     # Il y a n*(k-1) voisins avec ici k = 2 et n = le nombre de sommets du graphe.
     for k in range(graph.nb_nodes):
         cost = costPartition
         cp_part = copy.deepcopy(partition)
+        classSz = copy.deepcopy(classSizes)
         if (partition[k] == 0):
             cp_part[k] = 1-partition[k]
-            classSizes[0] -= 1
-            classSizes[1] += 1
-            #for l,v in graph[k].items():
-            #    if partition[k] != partition[l] : cost -= v
+            classSz[0] -= 1
+            classSz[1] += 1
+            #print(classSizes)
         elif (partition[k] == 1):
             cp_part[k] = 1-partition[k]
-            classSizes[1] -= 1
-            classSizes[0] += 1
-            #for l,v in graph[k].items():
-            #    if partition[k] != partition[l] : cost -= v
+            classSz[1] -= 1
+            classSz[0] += 1
+            #print(classSizes)
+        for l,w in graph[k].items():
+                if partition[k] != partition[l] : cost -= w
+                else : cost += w
         ## Ici le calcul du coût pose problème, trop lent O(n^2)
-        cost = computeCost(graph, cp_part)
+        #cost = computeCost(graph, cp_part)
         #cost = int(random.random()*2000 % 2000)
-        if (cost < bestCost and abs(classSizes[0]-classSizes[1]) <= 4):
+        #print(cost)
+        if (cost < bestCost and abs(classSz[0]-classSz[1]) <= 25) :
             bestCost = cost
             best = cp_part
-    return(best, bestCost, classSizes)
+            bestClass = classSz
+    return(best, bestCost, bestClass)
 
 
 def gradient(graph):
     # C0 la configuration initiale par tirage aléatoire
     C0 = [random.randint(0, 1) for k in range(graph.nb_nodes)]
-    # Calcul du coût de la solution initiale
+    # Calcul du coût de la solution initiale, on ne le calcule qu'une fois de cette façon
+    # On garde en mémoire pour chaque partition toruvée son coût et on le met à jour dans argbest.
     initCost = computeCost(graph, C0)
     print(f'Partition initiale : {str(C0)}\nCoût initial : {initCost}')
 
     Ci = C0
     costCi = initCost
-    classSizes = []
+    classSizes = [0, 0]
     i = 1
     done = False
     #argbestSwap(graph, C0, 0)
     while (not done) :
         # neighbourhoodPnD(graph, C0)
         (Cip1, costCip1, classSz) = argbestPnD(graph, Ci, costCi)
-        print(f'Itération {i} : Partition : {str(Cip1)} -- Coût : {costCip1}')
+        print(f'Itération {i} :  Coût : {costCip1} -- {str(classSz)}')
+        # print(f'Itération {i} : Partition : {str(Cip1)} -- Coût : {costCip1} et {str(classSz)}')
         if ( costCip1 < costCi ):
             i += 1
             Ci = Cip1
