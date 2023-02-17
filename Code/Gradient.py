@@ -81,7 +81,7 @@ def neighbourhoodPnD(graph, partition):
     print(nbVois)
     print(nb0, nb1)
 
-def argbestPnD(graph, partition, costPartition):
+def argbestPnD(graph, partition, costPartition, equity):
     '''
         Cherche dans le voisinge de la configuration "partition" le meilleur voisin (au sens du côut).
         mouvement élémentaire = Pick'n'Drop
@@ -121,7 +121,7 @@ def argbestPnD(graph, partition, costPartition):
         #cost = computeCost(graph, cp_part)
         #cost = int(random.random()*2000 % 2000)
         #print(cost)
-        if (cost < bestCost and abs(classSz[0]-classSz[1]) <= 25) :
+        if (cost < bestCost and abs(classSz[0]-classSz[1]) <= equity) :
             bestCost = cost
             best = cp_part
             bestClass = classSz
@@ -134,17 +134,28 @@ def gradient(graph):
     # Calcul du coût de la solution initiale, on ne le calcule qu'une fois de cette façon
     # On garde en mémoire pour chaque partition toruvée son coût et on le met à jour dans argbest.
     initCost = computeCost(graph, C0)
-    print(f'Partition initiale : {str(C0)}\nCoût initial : {initCost}')
+    # On initialise la taille des classes.
+    classSizes = [0, 0]
+    for k in C0:
+        if k == 0: classSizes[0] += 1
+        else : classSizes[1] += 1
+    print(f'Partition initiale : {str(C0)}\nCoût initial : {initCost} -- {str(classSizes)}')
 
     Ci = C0
     costCi = initCost
-    classSizes = [0, 0]
+    # Le +1 est pour les petites instances
+    if graph.nb_nodes <= 10:
+        equity = int(graph.nb_nodes*0.25)
+    elif graph.nb_nodes > 10 and graph.nb_nodes <= 50:
+        equity = int(graph.nb_nodes*0.10)
+    else :
+        equity = int(graph.nb_nodes*0.05)
     i = 1
     done = False
     #argbestSwap(graph, C0, 0)
     while (not done) :
         # neighbourhoodPnD(graph, C0)
-        (Cip1, costCip1, classSz) = argbestPnD(graph, Ci, costCi)
+        (Cip1, costCip1, classSz) = argbestPnD(graph, Ci, costCi, equity)
         print(f'Itération {i} :  Coût : {costCip1} -- {str(classSz)}')
         # print(f'Itération {i} : Partition : {str(Cip1)} -- Coût : {costCip1} et {str(classSz)}')
         if ( costCip1 < costCi ):
@@ -154,4 +165,4 @@ def gradient(graph):
             classSizes = classSz
         else :
             done = True
-    return (Ci, costCi, classSizes)
+    return (Ci, initCost, costCi, classSizes, equity)

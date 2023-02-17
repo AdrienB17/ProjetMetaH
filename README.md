@@ -2,6 +2,6 @@
 
 Python 3.9
 
-P = 2 ( nombre de classes ) 
+p = 2 (nombre de classes) 
 
-A peu près équitable = 1% de n ( n = nombre de sommets du graphe ) 
+A peu près équitable = 5% de n ( n = nombre de sommets du graphe ) 
