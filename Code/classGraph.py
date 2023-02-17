@@ -19,5 +19,6 @@ class Graph:
         st = f"Nombre de noeuds : {self.nb_nodes} \n"
         st += f"Nombre d'arêtes : {self.nb_edges} \n"
         st += f"(degMin : {self.deg_min}, degMax : {self.deg_max})\n"
-        st += str(self.graphRep)
+        for k in self.graphRep:
+            st += str(k) + ' : ' + str(self.graphRep[k]) + '\n'
         return st

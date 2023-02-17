@@ -53,5 +53,16 @@ def parse_file(file_path):
         u ,v = int(values[0]), float(values[1])
         deg_nodes.append(v)
 
-    graph = Graph(nb_nodes, nb_edges, deg_min, deg_max, graph, deg_nodes)
-    return graph
+    graphOut = Graph(nb_nodes, nb_edges, deg_min, deg_max, graph, deg_nodes)
+    ## On trie les sommets dans l'ordre croissant.
+    ## Si le graphe commence à 0 au lieu de 1, on réindexe.
+    graphOut.graphRep = {k: v for k, v in sorted(graph.items(), key=lambda item: item[0])}
+    try :
+        graphOut[0]
+        startWithZero = True
+    except KeyError:
+        startWithZero = False
+
+    if not startWithZero :
+       graphOut.graphRep = {(k-1) : v for k, v in graphOut.graphRep.items()} 
+    return graphOut

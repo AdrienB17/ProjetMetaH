@@ -5,13 +5,8 @@ import os
 import sys
 import time
 
-if __name__ == '__main__':
-
-    folderpath = "../Data/graph_samples/samples"
-    #folderpath = "../DataTest"
-    filepath_results = "../Solutions/results.txt"
-
-    with open(filepath_results, "w") as f:
+def runAllInstances(folderpath, outfile):
+     with open(filepath_results, "w") as f:
         # Boucle sur tous les fichiers du dossier
         files = os.listdir(folderpath)
         for file in files:
@@ -30,4 +25,16 @@ if __name__ == '__main__':
                     f.write(f"Solution : {solution}\n")
                     f.write(f"Temps de traitement : {duree} secondes\n\n")
 
-    print("toto")
+if __name__ == '__main__':
+
+    folderpath = "../Data/graph_samples/samples"
+    #folderpath = "../DataTest"
+    filepath_results = "../Solutions/results.txt"
+
+    relative_path = "/"
+    path = os.path.abspath("./")
+
+    graph = parse_file(path + relative_path)
+    print(graph)
+
+    partition = gradient(graph)
