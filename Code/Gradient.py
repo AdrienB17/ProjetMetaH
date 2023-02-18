@@ -128,7 +128,7 @@ def argbestPnD(graph, partition, costPartition, equity):
     return(best, bestCost, bestClass)
 
 
-def gradient(graph):
+def gradient(graph, param):
     # C0 la configuration initiale par tirage aléatoire
     C0 = [random.randint(0, 1) for k in range(graph.nb_nodes)]
     # Calcul du coût de la solution initiale, on ne le calcule qu'une fois de cette façon
@@ -144,12 +144,7 @@ def gradient(graph):
     Ci = C0
     costCi = initCost
     # Le +1 est pour les petites instances
-    if graph.nb_nodes <= 10:
-        equity = int(graph.nb_nodes*0.25)
-    elif graph.nb_nodes > 10 and graph.nb_nodes <= 50:
-        equity = int(graph.nb_nodes*0.10)
-    else :
-        equity = int(graph.nb_nodes*0.05)
+    equity = int(graph.nb_nodes*param)
     i = 1
     done = False
     #argbestSwap(graph, C0, 0)
