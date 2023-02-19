@@ -17,9 +17,17 @@ def runAllInstances(folderpath, outfile, algo=1):
         dans le fichier outfile.
         Algorithme (défaut = 0) :   0 = énumération
                                     1 = gradient
+
+        Ecriture d'une solution sous forme : "filename; nbNodes; initCost; finalCost; duration; eqParam"
+            filename : le nom du fichier testé
+            nbNodes : le nombre de sommets de l'instance
+            initCost : le coût associé à la partition initiale
+            finalCost : le coût trouvé à la fin de l'exécution
+            duration : la durée d'exécution
+            eqParam : le paramètre d'équité des classes de sorte que l'equité (en nombre de noeuds) soit égale à nbNodes*eqParam
     '''
     with open(filepath_results, "a") as f:
-        header = "filename; nbNodes; initCost; finalCost; duration\n"
+        header = "filename; nbNodes; initCost; finalCost; duration; eqParam\n"
         #outStr = ""
         f.write(header)
         # Boucle sur tous les fichiers du dossier
@@ -29,18 +37,20 @@ def runAllInstances(folderpath, outfile, algo=1):
             if file.endswith(".txt"):
                 path = folderpath+ "/" + file
                 graph = parse_file(path)
-                if graph.nb_nodes <= 500:
+                if graph.nb_nodes <= 1000:
                     # Mesurer le temps nécessaire pour trouver une solution
                     print(f"############# Début du fichier {file} ##############")
                     begin = time.time()
+                    param = 0
                     if algo == 0 :
                         partition = partition_graphV3(graph)
                     elif algo == 1:
-                        partition, initCost, finalCost, classSizes, equity = gradient(graph)
+                        param = 0.08
+                        partition, initCost, finalCost, classSizes, equity = gradient(graph, param)
                     duree = time.time() - begin
 
                     # Enregistrement du nom de l'instance, de la solution et du temps de traitement dans le fichier
-                    outStr = f"{file};{graph.nb_nodes};{initCost};{finalCost};{duree}\n"
+                    outStr = f"{file};{graph.nb_nodes};{initCost};{finalCost};{duree};{param}\n"
                     f.write(outStr)
                     #f.write(f"Instance : {file}\n")
                     #f.write(f"Solution : {partition}\n")
@@ -72,7 +82,7 @@ def runForParameters(filename, outfile , parameters, algo = 1):
 if __name__ == '__main__':
 
     folderpath = "./Data/graph_samples/samples"
-    filepath_results = "./Solutions/results.txt"
+    filepath_results = "./Solutions/results_gradient.txt"
 
     relative_path = "/Data/graph_samples/samples/centSommets.txt"
     outfile = "/Solutions/parameters.txt"
@@ -82,6 +92,6 @@ if __name__ == '__main__':
     graph = parse_file(path + relative_path)
 
     print(path+relative_path)
-    runForParameters(path+relative_path, path+outfile, parameters, 1)
+    #runForParameters(path+relative_path, path+outfile, parameters, 1)
     #runGradient(graph, 0.08)
-    #runAllInstances(folderpath, filepath_results, 1)
+    runAllInstances(folderpath, filepath_results, 1)
