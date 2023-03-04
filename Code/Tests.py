@@ -22,10 +22,10 @@ def test_computeCost(graph):
 if __name__ == '__main__':
 
     ## Importation des données
-    folderpath = "../Data/graph_samples/samples"
+    folderpath = "../Data/"
     filepath_results = "../Solutions/results.txt"
 
-    relative_path = "/Data/graph_samples/samples/dixSeptSommets.txt"
+    relative_path = "/Data/dixSeptSommets.txt"
     path = os.path.abspath("./")
 
     graph = parse_file(path + relative_path)

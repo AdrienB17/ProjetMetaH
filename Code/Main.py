@@ -1,8 +1,6 @@
-from ParseFile import *
 from Gradient import *
 from Enumeration import *
 import os
-import sys
 import time
 
 def runGradient(graph, param): 
@@ -27,7 +25,8 @@ def runAllInstances(folderpath, outfile, algo=1):
             eqParam : le paramètre d'équité des classes de sorte que l'equité (en nombre de noeuds) soit égale à nbNodes*eqParam
     '''
     with open(filepath_results, "a") as f:
-        header = "filename; nbNodes; initCost; finalCost; duration; eqParam\n"
+        header = "filename; nbNodes; initCost; finalCost; duration; eqParam\n" \
+            if algo == 1 else "filename; nbNodes; BestCost; duration; eqParam ; nbValidSolutions ; nbSolutions\n"
         #outStr = ""
         f.write(header)
         # Boucle sur tous les fichiers du dossier
@@ -41,35 +40,36 @@ def runAllInstances(folderpath, outfile, algo=1):
                     # Mesurer le temps nécessaire pour trouver une solution
                     print(f"############# Début du fichier {file} ##############")
                     begin = time.time()
-                    param = 0
+                    param = 0.08
                     if algo == 0 :
-                        partition = partition_graphV3(graph)
+                        if graph.nb_nodes <= 15:
+                            best_partition, best_score , nb_valid_solutions, duree = explicit_enumeration(graph, param)
+                        else:
+                            print("L'instance est trop grande pour être résolue par énumération")
+                            best_partition, best_score , nb_valid_solutions, duree = None, None, None, None
                     elif algo == 1:
-                        param = 0.08
                         partition, initCost, finalCost, classSizes, equity = gradient(graph, param)
                     duree = time.time() - begin
-
                     # Enregistrement du nom de l'instance, de la solution et du temps de traitement dans le fichier
-                    outStr = f"{file};{graph.nb_nodes};{initCost};{finalCost};{duree};{param}\n"
+                    outStr = f"{file};{graph.nb_nodes};{initCost};{finalCost};{duree};{param}\n" \
+                        if algo == 1 else f"{file};{graph.nb_nodes};{best_score};{duree};{param};{nb_valid_solutions};{2**graph.nb_nodes}\n"
                     f.write(outStr)
-                    #f.write(f"Instance : {file}\n")
-                    #f.write(f"Solution : {partition}\n")
-                    #f.write(f"Temps de traitement : {duree} secondes\n\n")
                     print(f"############# Fin du fichier {file} ##############")
 
-def runForParameters(filename, outfile , parameters, algo = 1):
+def runForParameters(filename, outfile, parameters, algo=1):
     with open(outfile, "a") as f:
-        header = "filename;nbNodes;initCost;finalCost;duration;param\n"
+        header = "filename;nbNodes;initCost;finalCost;duration;param\n" \
+            if algo == 1 else "filename; nbNodes; BestCost; duration; eqParam ; nbValidSolutions ; nbSolutions\n"
         f.write(header)
 
         graph = parse_file(filename)
         file = filename.split('/')[-1]
-        
+
         for k in parameters:
             for i in range(100):
                 begin = time.time()
-                if algo == 0 :
-                    partition = partition_graphV3(graph)
+                if algo == 0:
+                    partition = explicit_enumeration(graph, k)
                 elif algo == 1:
                     partition, initCost, finalCost, classSizes, equity = gradient(graph, k)
                 duree = time.time() - begin
@@ -81,17 +81,15 @@ def runForParameters(filename, outfile , parameters, algo = 1):
 
 if __name__ == '__main__':
 
-    folderpath = "./Data/graph_samples/samples"
-    filepath_results = "./Solutions/results_gradient.txt"
+    folderpath = "../Data/"
+    filepath_results = "../Solutions/results.txt"
 
-    relative_path = "/Data/graph_samples/samples/centSommets.txt"
-    outfile = "/Solutions/parameters.txt"
-    path = os.path.abspath("./")
+    relative_path = "../Data/CG_25_4.txt"
+    outfile = "../Solutions/parameters.txt"
 
     parameters = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.15, 0.20, 0.25]
-    graph = parse_file(path + relative_path)
+    graph = parse_file(relative_path)
 
-    print(path+relative_path)
     #runForParameters(path+relative_path, path+outfile, parameters, 1)
     #runGradient(graph, 0.08)
     runAllInstances(folderpath, filepath_results, 1)
