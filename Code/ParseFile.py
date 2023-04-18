@@ -30,28 +30,36 @@ def parse_file(file_path):
             u, v = map(int, values)
             if u not in graph:
                 graph[u] = {}
-            graph[v].update({u: 1})
             if v not in graph:
                 graph[v] = {}
             graph[u].update({v: 1})
+            graph[v].update({u: 1})
         else:
             # This line represents an edge
             u, v, weight = int(values[0]), int(values[1]), float(values[2])
             if u not in graph:
                 graph[u] = {}
-            graph[u].update({v: float(weight)})
             if v not in graph:
                 graph[v] = {}
+            graph[u].update({v: float(weight)})
             graph[v].update({u: float(weight)})
 
     # Problème, le premier noeud doit être 0 pour respecter les indices du tableau
+    min_node = min(graph.keys())
+
+    #for i in range(min_node, min_node+nb_nodes):
+    #    if i not in graph.keys():
+     #       graph[i] = {}
 
     lines = lines[nb_edges:]
     deg_nodes = []
-    for j in range(nb_nodes):
-        values = lines[j].split()
-        u ,v = int(values[0]), float(values[1])
-        deg_nodes.append(v)
+    deg_min = 0
+    deg_max = nb_nodes-1
+    if len(lines)>0:
+        for j in range(nb_nodes):
+            values = lines[j].split()
+            u ,v = int(values[0]), float(values[1])
+            deg_nodes.append(v)
 
     graphOut = Graph(nb_nodes, nb_edges, deg_min, deg_max, graph, deg_nodes)
     ## On trie les sommets dans l'ordre croissant.
