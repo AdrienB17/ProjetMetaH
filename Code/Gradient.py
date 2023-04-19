@@ -28,7 +28,8 @@ def computeCost(graph, partition):
 
 def check_valid_partition(partition,param):
     '''
-        Vérifie que la partition est valide.
+        Vérifie que la partition est valide au sens de l'équité.
+        0 < param < 1
     '''
     classSizes = [sum(partition) , len(partition) - sum(partition)]
     return abs(classSizes[0] - classSizes[1]) <= ceil(len(partition)*param)
