@@ -104,8 +104,8 @@ def bestInPop(pop):
         
 
 def geneticAlgorithm(graph):
-    pop_size = 64 # pop_size doit être une puissance de 2 pour l'instant.
-    NB_GEN = 50
+    pop_size = 128 # pop_size doit être une puissance de 2 pour l'instant.
+    NB_GEN = 100
     N = graph.nb_nodes
     population = initializePopulation(graph, pop_size)
     #print(population)
