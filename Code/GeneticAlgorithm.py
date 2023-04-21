@@ -29,7 +29,7 @@ def initializePopulation(graph, pop_size):
     return init_pop
 
 
-def fortuneWheelSelection(pop , p:int) -> set:
+def fortuneWheelSelection(pop , p:int):
     """ 
         On choisit p candidats parmi la population pop.
         Voir fonction random.choices du module random.
@@ -53,6 +53,26 @@ def fortuneWheelSelection(pop , p:int) -> set:
         S.append((ind, cost))
         #print(pop[k], sep="\n")
     return S
+
+def tournamentSelection(pop, p:int):
+    """
+        Séléction par tournoi, on fait s'affronter deux par deux au hasard les individus.
+        L'individu avec le plus petit score de fitness (ici le poids des arêtes interclasse) est séléctionné.
+        On continue jusqu'à atteindre une population de p individus.
+        Attention, à chaque tournoi on ne retire pas de la population l'individu qui gagne, si bien
+        qu'il peut être séléctionné plusieurs fois. Cependant si la population est assez grande, la probabilité d'être
+        tiré plusieurs fois est très faible.
+    """
+    n = len(pop)
+    S = []
+    while (len(S) <= p):
+        ind1, ind2 = random.sample(pop, 2)
+        _, c1 = ind1
+        _, c2 = ind2
+        if (c1 < c2) : S.append(ind1)
+        else : S.append(ind2)
+    return S
+
 
 def crossOver(partition1:list, partition2:list, N:int):
     crossPoint = random.randrange(N)    # On prend un point de croisement au hasard.
@@ -95,7 +115,8 @@ def geneticAlgorithm(graph, popSize, nbGen):
         t += 1
         print(f"Génération numéro {t}.")
         # On réduit la population de la génération précédente de moitié par séléction.
-        new_pop = fortuneWheelSelection(population, pop_size//2)
+        #new_pop = fortuneWheelSelection(population, pop_size//2)
+        new_pop = tournamentSelection(population, pop_size//2)
         # On prend deux individus dans la nouvelle populatione et on les fait se reproduire par crossOver.
         # Cette reproduction engendre 2 nouveaux individus qui sont ajoutés à la population.
         while (len(new_pop) < pop_size):
@@ -109,10 +130,10 @@ def geneticAlgorithm(graph, popSize, nbGen):
             # génétique et conserver le fait que toute configuration a une probabilité non nulle d'être vérifiée.
             # (même principe que la mutation).
             rejet = random.random()
-            if check_valid_partition(child1, 0.08) or rejet > 0.95:
+            if check_valid_partition(child1, 0.08) or rejet > 0.90:
                 cout1 = computeCost(graph, child1)
                 new_pop.append((child1, cout1))
-            if check_valid_partition(child2, 0.08) or rejet > 0.95:
+            if check_valid_partition(child2, 0.08) or rejet > 0.90:
                 cout2 = computeCost(graph, child2)
                 new_pop.append((child2, cout2))
         # On applique un facteur de mutation à la nouvelle population (probabilité de mutation de 1 pour 1000)
@@ -129,8 +150,8 @@ def geneticAlgorithm(graph, popSize, nbGen):
 
 
 ## EXECUTION 
-relative_path = "Code/samples/centSommets.txt"
+relative_path = "Samples/centSommets.txt"
 graph = parse_file(relative_path)
 
-bestInd, bestCost = geneticAlgorithm(graph, 100, 40)
-#print(check_valid_partition(bestInd, 0.08))
+bestInd, bestCost = geneticAlgorithm(graph, 100, 30)
+print(check_valid_partition(bestInd, 0.08))
