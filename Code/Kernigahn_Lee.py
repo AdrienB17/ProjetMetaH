@@ -4,12 +4,6 @@ import copy
 
 import random
 
-import random
-from math import ceil
-import copy
-
-import random
-
 def calculate_gain(v, part1, part2, graph, p):
     # Size of partitions before movement
     part1_size = len(part1)
