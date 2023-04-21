@@ -1,8 +1,7 @@
-from math import ceil
 import random
 from ParseFile import *
 from classGraph import *
-from Gradient import estAreteInterclasse, computeCost, check_valid_partition
+from Gradient import computeCost, check_valid_partition
 
 
 def initializePopulation(graph, pop_size):
@@ -20,7 +19,7 @@ def initializePopulation(graph, pop_size):
     i = 0
     while (i < pop_size):
         ind = [random.randint(0, 1) for k in range(graph.nb_nodes)]
-        isValid = check_valid_partition(ind, 0.10)
+        isValid = check_valid_partition(ind, 0.08)
         #print(ind, isValid)
         if isValid : 
             cost = computeCost(graph, ind)
@@ -41,11 +40,11 @@ def fortuneWheelSelection(pop , p:int) -> set:
     S = []
     for j in range(p):
         k = 0
-        x = random.randrange(sigma)
+        x = random.randint(1, sigma)
         #print(x)
         y = sigma
         i = 0
-        while i < n and y > x:
+        while i < n and x > y:
             _, cost = pop[i]
             y = y - cost 
             k = i
@@ -54,24 +53,6 @@ def fortuneWheelSelection(pop , p:int) -> set:
         S.append((ind, cost))
         #print(pop[k], sep="\n")
     return S
-
-def tournament(individuals, s = 2):
-    n = len(individuals)
-    nb_comp = n//2
-    while (len(individuals) != 1):
-        pass
-
-def tournamentSelection(partition, pop, s=2, p=0.7):
-    """
-        Le paramètre pop correspond à la population désirée, sélectionée après autant de tournois.
-        Le paramètre s correspond à la taille du tournoi, par défaut il vaut 2.
-            s doit être une puissance de 2.
-        Le paramètre p correspond au taux d'acceptation du meilleur dans le tournoi.
-            Cela signifie que le vainqueur d'un tournoi est pris dans la population retournée avec une probabilité de p.
-            0.5 < p <= 1
-            cf. "A Comparative Analysis of Selection Schemes Used in Genetic Algorithms", Goldberg & Deb
-    """
-    pass
 
 def crossOver(partition1:list, partition2:list, N:int):
     crossPoint = random.randrange(N)    # On prend un point de croisement au hasard.
@@ -103,37 +84,53 @@ def bestInPop(pop):
     return (bestind, min)
         
 
-def geneticAlgorithm(graph):
-    pop_size = 128 # pop_size doit être une puissance de 2 pour l'instant.
-    NB_GEN = 100
+def geneticAlgorithm(graph, popSize, nbGen):
+    pop_size = popSize
+    nb_gen = nbGen
     N = graph.nb_nodes
     population = initializePopulation(graph, pop_size)
     #print(population)
     t = 0
-    while (t < NB_GEN):
+    while (t < nb_gen):
         t += 1
-        print(f"Itération {t}")
+        print(f"Génération numéro {t}.")
+        # On réduit la population de la génération précédente de moitié par séléction.
         new_pop = fortuneWheelSelection(population, pop_size//2)
-        for p in range(0, pop_size//2-1, 2):
-            p1, c1 = new_pop[p]
-            p2, c2 = new_pop[p+1]
+        # On prend deux individus dans la nouvelle populatione et on les fait se reproduire par crossOver.
+        # Cette reproduction engendre 2 nouveaux individus qui sont ajoutés à la population.
+        while (len(new_pop) < pop_size):
+            parent1, parent2 = random.sample(population, 2)
+            p1, c1 = parent1
+            p2, c2 = parent2
             child1, child2 = crossOver(p1, p2, N)
-            cout1 = computeCost(graph, child1)
-            cout2 = computeCost(graph, child2)
-            new_pop.append((child1, cout1))
-            new_pop.append((child2, cout2))
+            # Attention, on doit rejeter les partitions non-valides avec un taux proche de 1
+            # sinon, on ne respecte plus le critère d'équité : c'est une sorte d'eugénisme.
+            # On ne rejette pas tout les individus ne respectant pas ce critère pour conserver un brassage 
+            # génétique et conserver le fait que toute configuration a une probabilité non nulle d'être vérifiée.
+            # (même principe que la mutation).
+            rejet = random.random()
+            if check_valid_partition(child1, 0.08) or rejet > 0.95:
+                cout1 = computeCost(graph, child1)
+                new_pop.append((child1, cout1))
+            if check_valid_partition(child2, 0.08) or rejet > 0.95:
+                cout2 = computeCost(graph, child2)
+                new_pop.append((child2, cout2))
+        # On applique un facteur de mutation à la nouvelle population (probabilité de mutation de 1 pour 1000)
         mutation(graph, new_pop, N, p = 0.001)
         population = new_pop
     
     print("Meilleure partition trouvée : ")
-    print(bestInPop(population))
+    best = bestInPop(population)
+    print(best)
     #print(population)
-    return population
+
+    # best est un tuple (bestInd:List, bestCost:float)
+    return best
 
 
 ## EXECUTION 
 relative_path = "Code/samples/centSommets.txt"
 graph = parse_file(relative_path)
 
-
-pop = geneticAlgorithm(graph)
+bestInd, bestCost = geneticAlgorithm(graph, 100, 40)
+#print(check_valid_partition(bestInd, 0.08))

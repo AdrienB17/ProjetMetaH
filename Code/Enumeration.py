@@ -1,7 +1,7 @@
 import sys
 import time
-from Code.ParseFile import parse_file
-from Code.Gradient import check_valid_partition, computeCost, show_solution
+from ParseFile import parse_file
+from Gradient import check_valid_partition, computeCost, show_solution
 
 
 def explicit_enumeration(graph, param):

@@ -81,14 +81,14 @@ def runForParameters(filename, outfile, parameters, algo=1):
 
 if __name__ == '__main__':
 
-    folderpath = "../Data/"
-    filepath_results = "../Solutions/results.txt"
+    folderpath = "./Samples"
+    filepath_results = "./Solutions/results.txt"
 
-    relative_path = "../Data/CG_25_4.txt"
-    outfile = "../Solutions/parameters.txt"
+    #relative_path = "../Data/CG_25_4.txt"
+    #outfile = "../Solutions/parameters.txt"
 
-    parameters = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.15, 0.20, 0.25]
-    graph = parse_file(relative_path)
+    #parameters = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.15, 0.20, 0.25]
+    #graph = parse_file(relative_path)
 
     #runForParameters(path+relative_path, path+outfile, parameters, 1)
     #runGradient(graph, 0.08)
