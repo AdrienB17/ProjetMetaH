@@ -130,10 +130,10 @@ def geneticAlgorithm(graph, popSize, nbGen):
             # génétique et conserver le fait que toute configuration a une probabilité non nulle d'être vérifiée.
             # (même principe que la mutation).
             rejet = random.random()
-            if check_valid_partition(child1, 0.08) or rejet > 0.90:
+            if check_valid_partition(child1, 0.08) or rejet > 0.95:
                 cout1 = computeCost(graph, child1)
                 new_pop.append((child1, cout1))
-            if check_valid_partition(child2, 0.08) or rejet > 0.90:
+            if check_valid_partition(child2, 0.08) or rejet > 0.95:
                 cout2 = computeCost(graph, child2)
                 new_pop.append((child2, cout2))
         # On applique un facteur de mutation à la nouvelle population (probabilité de mutation de 1 pour 1000)
@@ -149,9 +149,3 @@ def geneticAlgorithm(graph, popSize, nbGen):
     return best
 
 
-## EXECUTION 
-relative_path = "Samples/centSommets.txt"
-graph = parse_file(relative_path)
-
-bestInd, bestCost = geneticAlgorithm(graph, 100, 30)
-print(check_valid_partition(bestInd, 0.08))
