@@ -1,35 +1,31 @@
 import random
-from math import ceil
-import copy
-
-import random
 
 def calculate_gain(v, part1, part2, graph, p):
-    # Size of partitions before movement
+    # Taille des partitions au début
     part1_size = len(part1)
     part2_size = len(part2)
 
-    # Move the node from part1 to part2
+    # On déplace un noeud de part1 vers part2
     part2.setdefault(v, graph[v])
     del part1[v]
 
-    # Size of partitions after the movement
+    # Taille des partitions après le mouvement
     new_part1_size = part1_size - 1
     new_part2_size = part2_size + 1
 
-    # We verify that the partitions size are correct
+    # Vérification de la taille des partitions
     if abs(new_part1_size - new_part2_size) > p:
-        # Move node from part2 to part1
+        # On déplace le noeud de part2 vers part1
         part1.setdefault(v, graph[v])
         del part2[v]
 
-        # Gain = 0 because size incorrect
+        # Le gain est défini à 0 si la taille est incorrecte
         return 0
 
-    # Calcul of the gain
+    # Calcul du gain
     gain = new_part1_size - new_part2_size
 
-    # Move node from part2 to part1 if gain < 0
+    # Si le gain est inférieur à 0, alors on deplace le noeud de part2 vers part1
     if gain < 0:
         part1.setdefault(v, graph[v])
         del part2[v]
@@ -41,18 +37,18 @@ def Kernighan_Lin(graph, p=None):
     nodes = list(graph.keys())
     n = len(nodes)
 
-    # initial partition
+    # Partition initiale
     part1 = nodes[:n//2]
     part2 = nodes[n//2:]
 
-    # calculate initial cut
+    # Calcul de la coupe intiale
     cut = 0
     for node in part1:
         for neighbor, weight in graph[node].items():
             if neighbor in part2:
                 cut += weight
 
-    # repeat until no further improvement possible
+    # On répète les opérations jusqu'à ce qu'il n'y ait plus d'amélioration possible.
     improvement = True
     while improvement:
         improvement = False
