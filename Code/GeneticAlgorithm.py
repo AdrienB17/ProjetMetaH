@@ -149,3 +149,9 @@ def geneticAlgorithm(graph, popSize, nbGen):
     return best
 
 
+## EXECUTION 
+# relative_path = "Samples/quinzeSommets.txt"
+# graph = parse_file(relative_path)
+
+# bestInd, bestCost = geneticAlgorithm(graph, 100, 30)
+# print(check_valid_partition(bestInd, 0.08))
